@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Dashboard - Zeeland Hospital</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logout-btn {
+      background: #d9534f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h2>Patient Dashboard</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div id="messages"></div>
+
+  <form id="messageForm">
+    <textarea id="message" placeholder="Write a message to your doctor..." required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
+    const patientId = localStorage.getItem("patientId");
+
+    // Replace with your actual doctor email
+    const doctorEmail = "sbtflex33@gmail.com"; 
+
+    if (!patientId) window.location.href = "login.html";
+
+    function logout() {
+      localStorage.removeItem("patientId");
+      window.location.href = "index.html";
+    }
+
+    async function loadMessages() {
+      try {
+        const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
+        const data = await res.json();
+        const box = document.getElementById("messages");
+        box.innerHTML = data.map(m =>
+          `<div><b>${m.from === patientId ? 'You' : m.from}:</b> ${m.message}</div>`
+        ).join('');
+      } catch (error) {
+        document.getElementById("messages").innerText = "❌ Error loading messages.";
+      }
+    }
+
+    document.getElementById("messageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        from: patientId,
+        to: doctorEmail,
+        message: document.getElementById("message").value
+      };
+      try {
+        await fetch(`${backendUrl}/api/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        document.getElementById("message").value = "";
+        loadMessages();
+      } catch {
+        alert("❌ Failed to send message.");
+      }
+    });
+
+    loadMessages();
+    setInterval(loadMessages, 5000);
+  </script>
+</body>
+</html>

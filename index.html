@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zeeland Hospital - Welcome</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url(zee\ b.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    img {
+      padding: auto;
+      margin-top: -140px;
+      margin-left: -190px;
+    }
+    h4 {
+      color: whitesmoke;
+      font-size: 12px;
+      margin-top: -21px;
+      margin-left: -25px;
+    }
+    h1 {
+      color: whitesmoke;
+      font-size: 32px;
+      text-align: right;
+    }
+    h3 {
+      color: #444;
+      font-weight: normal;
+    }
+    .btn-group {
+      margin-top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 250px;
+      background: rgba(103, 96, 112, 0.5);
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    }
+    button {
+      padding: 12px;
+      font-size: 16px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <h1><i>Welcome to</i> <br>Zeeland Hospital</h1>
+  <h4><i>( Your safety is our priority )</i></h4>
+  <img width="120px" src="logo.png" alt="logo">
+
+  <div class="btn-group">
+    <button onclick="location.href='register.html'">📝 New Patient - Register</button>
+    <button onclick="location.href='login.html'">🔐 Patient Login</button>
+    <button onclick="location.href='doctor-login.html'">👨‍⚕️ Doctor Login</button>
+    <button onclick="location.href='doctor-register.html'">👨‍⚕️ Doctor Registration</button>
+  </div>
+
+</body>
+</html>
