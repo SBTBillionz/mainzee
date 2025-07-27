@@ -2,72 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Zeeland Hospital - Welcome</title>
+  <title>FCTA General Hospital - Welcome</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url(zee\ b.jpg);
-      background-repeat: no-repeat;
-      background-size: cover;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       margin: 0;
+      text-align: center;
     }
-    img {
-      padding: auto;
-      margin-top: -140px;
-      margin-left: -190px;
+    .hospital-icon {
+      width: 100px;
+      height: 100px;
+      animation: pulse 2s infinite ease-in-out;
+      margin-bottom: 15px;
     }
-    h4 {
-      color: whitesmoke;
-      font-size: 12px;
-      margin-top: -21px;
-      margin-left: -25px;
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.9; }
+      100% { transform: scale(1); opacity: 1; }
     }
+
     h1 {
-      color: whitesmoke;
-      font-size: 32px;
-      text-align: right;
+      color: #ffffff;
+      font-size: 36px;
+      margin-bottom: 10px;
     }
-    h3 {
-      color: #444;
-      font-weight: normal;
+
+    h4 {
+      color: #f0f0f0;
+      font-size: 14px;
+      margin-top: -5px;
+      margin-bottom: 40px;
     }
+
     .btn-group {
-      margin-top: 100px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px 20px;
+      width: 300px;
       display: flex;
       flex-direction: column;
       gap: 15px;
-      width: 250px;
-      background: rgba(103, 96, 112, 0.5);
-    padding: 30px;
-    width: 350px;
-    text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
+
     button {
       padding: 12px;
       font-size: 16px;
-      background-color: #0077cc;
+      background-color: #0066cc;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background-color: #005fa3;
+      background-color: #004e99;
     }
-    
   </style>
 </head>
 <body>
 
-  <h1><i>Welcome to</i> <br>Zeeland Hospital</h1>
-  <h4><i>( Your safety is our priority )</i></h4>
-  <img width="120px" src="logo.png" alt="logo">
+  <!-- 🏥 Animated Hospital Icon (SVG) -->
+  <svg class="hospital-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24">
+    <path d="M19 3H5a2 2 0 00-2 2v16h2v-2h14v2h2V5a2 2 0 00-2-2zm0 12H5v-2h14v2zm0-4H5V9h14v2zm-6-4v2H11V7H9V5h2V3h2v2h2v2h-2z"/>
+  </svg>
+
+  <h1>Welcome to <br>FCTA General Hospital</h1>
+  <h4><i>Your health, our mission.</i></h4>
 
   <div class="btn-group">
     <button onclick="location.href='register.html'">📝 New Patient - Register</button>
