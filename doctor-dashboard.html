@@ -2,146 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Doctor Dashboard - Zeeland Hospital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Dashboard - WhatsApp Style</title>
   <style>
     body {
-      font-family: Arial;
-      max-width: 700px;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+    }
+    .chat-container {
+      max-width: 600px;
       margin: auto;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-    select, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-    }
-    #messages {
-      border: 1px solid #ccc;
-      padding: 10px;
-      height: 300px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      background: white;
-    }
-    .top-bar {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      height: 100vh;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .chat-header {
+      background: #075e54;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
       align-items: center;
     }
-    .logout-btn {
-      background: #d9534f;
-      color: white;
-      border: none;
+    .chat-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      max-width: 70%;
+      margin-bottom: 10px;
       padding: 8px 12px;
+      border-radius: 10px;
+      position: relative;
+      font-size: 14px;
+    }
+    .sent {
+      background: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+    .received {
+      background: #e6e6e6;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+    .timestamp {
+      font-size: 10px;
+      color: gray;
+      text-align: right;
+      margin-top: 2px;
+    }
+    .chat-footer {
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid #ccc;
+    }
+    textarea {
+      flex: 1;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+    button {
+      background: #128c7e;
+      color: white;
+      padding: 10px 16px;
+      border: none;
       border-radius: 5px;
       cursor: pointer;
     }
-    .bubble {
-      margin: 5px;
-      padding: 10px;
-      border-radius: 10px;
-      max-width: 75%;
-      display: inline-block;
-      clear: both;
-      animation: fadeIn 0.3s ease-in;
+    .typing {
+      font-size: 12px;
+      color: #555;
+      padding: 5px 15px;
+      height: 18px;
     }
-    .from {
-      background-color: #d1e7dd;
-      float: right;
-      text-align: right;
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
     }
-    .to {
-      background-color: #f8d7da;
-      float: left;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    input[type="file"] {
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <div class="top-bar">
-    <h2>Doctor Dashboard</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+  <div class="chat-container">
+    <div class="chat-header">
+      <img src="https://i.imgur.com/8Km9tLL.png" alt="Doctor Avatar">
+      <div>
+        <div><strong>Dr. Flex</strong></div>
+        <small>Online</small>
+      </div>
+    </div>
+    <div class="typing" id="typingIndicator">&nbsp;</div>
+    <div class="chat-body" id="messages"></div>
+    <div class="chat-footer">
+      <textarea id="messageInput" rows="1" placeholder="Type a message..."></textarea>
+      <input type="file" id="fileInput" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
   </div>
 
-  <label for="patientSelect">Select Patient</label>
-  <select id="patientSelect"></select>
-
-  <div id="messages"></div>
-
-  <form id="messageForm">
-    <textarea id="message" placeholder="Write your message..." required></textarea>
-    <button type="submit">Send</button>
-  </form>
-
   <script>
-    const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
-    const doctorEmail = localStorage.getItem("doctorEmail");
-    let lastMessageId = null;
+    const messagesEl = document.getElementById("messages");
+    const typingEl = document.getElementById("typingIndicator");
+    const messageInput = document.getElementById("messageInput");
+    let isTyping = false;
 
-    if (!doctorEmail) window.location.href = "doctor-login.html";
+    messageInput.addEventListener("input", () => {
+      if (!isTyping) {
+        isTyping = true;
+        typingEl.innerText = "Doctor is typing...";
+        setTimeout(() => {
+          isTyping = false;
+          typingEl.innerText = "";
+        }, 1500);
+      }
+    });
 
-    function logout() {
-      localStorage.removeItem("doctorEmail");
-      window.location.href = "index.html";
-    }
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      const file = document.getElementById("fileInput").files[0];
 
-    async function loadPatients() {
-      const res = await fetch(`${backendUrl}/api/patients`);
-      const data = await res.json();
-      const select = document.getElementById("patientSelect");
-      select.innerHTML = data.map(p =>
-        `<option value="${p.patientId}">${p.name} ${p.surname} (${p.patientId})</option>`
-      ).join('');
-      loadMessages();
-    }
-
-    async function loadMessages() {
-      const patientId = document.getElementById("patientSelect").value;
-      const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
-      const data = await res.json();
-      const box = document.getElementById("messages");
-
-      data.forEach(m => {
-        if (!lastMessageId || m._id > lastMessageId) {
-          const div = document.createElement("div");
-          div.className = m.from === doctorEmail ? "bubble from" : "bubble to";
-          div.innerHTML = `<b>${m.from === doctorEmail ? "You" : m.from}:</b> ${m.message}`;
-          box.appendChild(div);
-          box.scrollTop = box.scrollHeight;
-          lastMessageId = m._id;
+      if (text || file) {
+        const div = document.createElement("div");
+        div.className = "message sent";
+        div.innerHTML = `${text}`;
+        if (file) {
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(file);
+          link.download = file.name;
+          link.innerText = `📎 ${file.name}`;
+          div.appendChild(document.createElement("br"));
+          div.appendChild(link);
         }
-      });
+        const time = document.createElement("div");
+        time.className = "timestamp";
+        time.innerText = new Date().toLocaleTimeString();
+        div.appendChild(time);
+
+        messagesEl.appendChild(div);
+        messageInput.value = "";
+        document.getElementById("fileInput").value = "";
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
     }
-
-    document.getElementById("patientSelect").addEventListener("change", () => {
-      document.getElementById("messages").innerHTML = "";
-      lastMessageId = null;
-      loadMessages();
-    });
-
-    document.getElementById("messageForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const to = document.getElementById("patientSelect").value;
-      const payload = {
-        from: doctorEmail,
-        to,
-        message: document.getElementById("message").value
-      };
-      await fetch(`${backendUrl}/api/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      document.getElementById("message").value = "";
-      loadMessages();
-    });
-
-    loadPatients();
-    setInterval(loadMessages, 3000);
   </script>
 </body>
 </html>
