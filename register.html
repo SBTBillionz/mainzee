@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Patient Registration - Zeeland Hospital</title>
+  <title>Patient Registration - FCTA General Hospital</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,7 +13,6 @@
       background-size: cover;
     }
     form {
-      /* background: rgba(46, 62, 82, 0.5); */
       padding: 30px;
       width: 350px;
       margin: auto;
@@ -48,7 +47,7 @@
   </style>
 </head>
 <body>
-  <h2>Zeeland Hospital - Patient Registration</h2>
+  <h2>FCTA General Hospital - Patient Registration</h2>
   <form id="registerForm">
     <input type="text" id="name" placeholder="First Name" required>
     <input type="text" id="surname" placeholder="Surname" required>
@@ -95,9 +94,7 @@
       try {
         const res = await fetch(`${backendUrl}/api/registerPatient`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
@@ -105,13 +102,10 @@
         if (res.ok) {
           document.getElementById("response").style.color = "green";
           document.getElementById("response").textContent = "✅ Registered successfully! Your Patient ID is: " + data.patientId;
-          // Redirect after 2s
-          setTimeout(() => {
-            window.location.href = "login.html";
-          }, 2000);
+          setTimeout(() => window.location.href = "login.html", 2000);
         } else {
           document.getElementById("response").style.color = "red";
-          document.getElementById("response").textContent = "❌ Error: " + (data.error || "Something went wrong.");
+          document.getElementById("response").textContent = "❌ Error: " + (data.message || data.error || "Something went wrong.");
         }
       } catch (err) {
         document.getElementById("response").style.color = "red";
