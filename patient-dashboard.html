@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -116,7 +117,9 @@
       <input type="file" id="fileInput" />
       <button onclick="sendMessage()">Send</button>
     </div>
-  </div>  <script>
+  </div>
+
+  <script>
     const messagesEl = document.getElementById("messages");
     const typingEl = document.getElementById("typingIndicator");
     const messageInput = document.getElementById("messageInput");
@@ -160,5 +163,6 @@
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
