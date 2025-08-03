@@ -68,7 +68,6 @@
       line-height: 1.4;
       font-size: 14px;
       position: relative;
-      animation: fadeIn 0.3s ease-in-out;
       word-wrap: break-word;
     }
 
@@ -132,11 +131,6 @@
       padding-bottom: 5px;
       font-style: italic;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
@@ -162,7 +156,9 @@
   <script>
     const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
     const patientId = localStorage.getItem("patientId");
-    const doctorEmail = localStorage.getItem("doctorEmail") || "sbtflex33@gmail.com"; // fallback
+    const doctorEmail = localStorage.getItem("doctorEmail") || "sbtflex33@gmail.com";
+
+    let lastRenderedMessages = "";
 
     if (!patientId) window.location.href = "login.html";
 
@@ -177,7 +173,7 @@
         const data = await res.json();
         const box = document.getElementById("messages");
 
-        box.innerHTML = data.map((m, i) => {
+        const newHTML = data.map((m) => {
           const isMe = m.from === patientId;
           const bubbleClass = isMe ? 'from-me' : 'from-them';
           const sender = isMe ? 'You' : 'Doctor';
@@ -191,7 +187,12 @@
             </div>`;
         }).join('');
 
-        box.scrollTop = box.scrollHeight;
+        if (newHTML !== lastRenderedMessages) {
+          box.innerHTML = newHTML;
+          box.scrollTop = box.scrollHeight;
+          lastRenderedMessages = newHTML;
+        }
+
       } catch (error) {
         document.getElementById("messages").innerText = "❌ Error loading messages.";
       }
@@ -211,6 +212,7 @@
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const messageField = document.getElementById("message");
+
       const payload = {
         from: patientId,
         to: doctorEmail,
