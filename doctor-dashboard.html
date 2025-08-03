@@ -2,30 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doctor Dashboard - Zeeland Hospital</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
+      background-color: #e5ddd5;
       margin: 0;
       padding: 0;
-      background-color: #e5ddd5;
     }
 
-    .container {
+    .chat-container {
       display: flex;
       flex-direction: column;
+      max-width: 700px;
+      margin: auto;
       height: 100vh;
+      background-color: #f0f0f0;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
     }
 
     .top-bar {
-      background-color: #128c7e;
+      background-color: #075e54;
       color: white;
       padding: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
     }
 
     .profile-section {
@@ -50,42 +53,11 @@
       cursor: pointer;
     }
 
-    .chat-area {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .patient-list {
-      width: 200px;
-      background-color: #fff;
-      border-right: 1px solid #ccc;
-      overflow-y: auto;
-    }
-
-    .patient-list div {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
-
-    .patient-list div:hover,
-    .patient-list .active {
-      background-color: #f5f5f5;
-    }
-
-    .chat-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background-color: #fff;
-    }
-
     #messages {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
-      background-color: #fff;
+      background-color: #dcf8c6;
     }
 
     .message-bubble {
@@ -93,9 +65,10 @@
       padding: 10px 14px;
       border-radius: 10px;
       margin: 8px 0;
+      line-height: 1.4;
       font-size: 14px;
       position: relative;
-      animation: fadeIn 0.3s ease-in-out;
+      word-wrap: break-word;
     }
 
     .from-me {
@@ -107,7 +80,7 @@
     }
 
     .from-them {
-      background-color: #e4e4e4;
+      background-color: white;
       color: #333;
       margin-right: auto;
       text-align: left;
@@ -116,15 +89,20 @@
 
     .timestamp {
       font-size: 10px;
-      color: #777;
+      color: #888;
       margin-top: 4px;
+    }
+
+    .receipt {
+      font-size: 10px;
+      margin-left: 5px;
     }
 
     #messageForm {
       display: flex;
       padding: 15px;
-      border-top: 1px solid #ccc;
       background-color: #f0f0f0;
+      border-top: 1px solid #ccc;
     }
 
     #message {
@@ -136,7 +114,7 @@
     }
 
     button {
-      background-color: #128c7e;
+      background-color: #075e54;
       color: white;
       border: none;
       border-radius: 20px;
@@ -146,58 +124,54 @@
       font-size: 14px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    label, select {
+      display: block;
+      padding: 10px 15px;
     }
 
-    @media screen and (max-width: 768px) {
-      .chat-area {
-        flex-direction: column;
-      }
+    select {
+      width: 100%;
+      margin-bottom: 10px;
+    }
 
-      .patient-list {
-        width: 100%;
-        height: 150px;
-        display: flex;
-        overflow-x: auto;
-        overflow-y: hidden;
-        border-bottom: 1px solid #ccc;
-      }
-
-      .patient-list div {
-        min-width: 150px;
-        border-right: 1px solid #eee;
-      }
+    .typing-indicator {
+      font-size: 12px;
+      color: #666;
+      padding-left: 15px;
+      padding-bottom: 5px;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="chat-container">
     <div class="top-bar">
       <div class="profile-section">
-        <img src="https://www.svgrepo.com/show/12856/doctor.svg" alt="Doctor">
-        <strong>Doctor Dashboard</strong>
+        <img src="https://www.svgrepo.com/show/382106/avatar-doctor-male.svg" alt="Doctor">
+        <strong>Dr. Kabiru</strong>
       </div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <div class="chat-area">
-      <div class="patient-list" id="patientList"></div>
-      <div class="chat-section">
-        <div id="messages"></div>
-        <form id="messageForm">
-          <input type="text" id="message" placeholder="Type a reply..." required />
-          <button type="submit">Send</button>
-        </form>
-      </div>
-    </div>
+    <label for="patientSelect">💊 Chat with Patient</label>
+    <select id="patientSelect"></select>
+
+    <div class="typing-indicator" id="typingIndicator"></div>
+
+    <div id="messages"></div>
+
+    <form id="messageForm">
+      <input type="text" id="message" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
   </div>
 
   <script>
     const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
-    const doctorEmail = localStorage.getItem("doctorEmail") || "sbtflex33@gmail.com";
-    if (!doctorEmail) window.location.href = "index.html";
+    const doctorEmail = localStorage.getItem("doctorEmail");
+    let lastRenderedMessages = "";
+
+    if (!doctorEmail) window.location.href = "doctor-login.html";
 
     function logout() {
       localStorage.removeItem("doctorEmail");
@@ -205,57 +179,89 @@
     }
 
     async function loadPatients() {
-      const res = await fetch(`${backendUrl}/api/patients`);
-      const patients = await res.json();
-      const list = document.getElementById("patientList");
-      list.innerHTML = patients.map(p => `<div onclick="selectPatient('${p._id}', this)">${p.name}</div>`).join("");
-    }
-
-    let currentPatientId = null;
-    let previousMessages = "";
-
-    async function loadMessages() {
-      if (!currentPatientId) return;
-      const res = await fetch(`${backendUrl}/api/messages?patientId=${currentPatientId}`);
-      const data = await res.json();
-      const html = data.map(m => {
-        const isMe = m.from === doctorEmail;
-        const bubbleClass = isMe ? 'from-me' : 'from-them';
-        const sender = isMe ? 'You' : 'Patient';
-        const time = new Date(m.createdAt).toLocaleTimeString();
-        return `<div class="message-bubble ${bubbleClass}">
-                  <div>${m.message}</div>
-                  <div class="timestamp">${sender} • ${time}</div>
-                </div>`;
-      }).join("");
-
-      if (html !== previousMessages) {
-        const box = document.getElementById("messages");
-        box.innerHTML = html;
-        box.scrollTop = box.scrollHeight;
-        previousMessages = html;
+      try {
+        const res = await fetch(`${backendUrl}/api/patients`);
+        const data = await res.json();
+        const select = document.getElementById("patientSelect");
+        select.innerHTML = data.map(p =>
+          `<option value="${p.patientId}">${p.name} ${p.surname} (${p.patientId})</option>`
+        ).join('');
+        loadMessages();
+      } catch (err) {
+        alert("❌ Failed to load patients.");
       }
     }
 
-    function selectPatient(id, el) {
-      currentPatientId = id;
-      document.querySelectorAll(".patient-list div").forEach(d => d.classList.remove("active"));
-      el.classList.add("active");
-      previousMessages = "";
-      loadMessages();
+    async function loadMessages() {
+      const patientId = document.getElementById("patientSelect").value;
+      try {
+        const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
+        const data = await res.json();
+        const box = document.getElementById("messages");
+
+        const newHTML = data.map((m) => {
+          const isMe = m.from === doctorEmail;
+          const bubbleClass = isMe ? 'from-me' : 'from-them';
+          const sender = isMe ? 'You' : 'Patient';
+          const time = new Date(m.createdAt).toLocaleTimeString();
+          const receipt = isMe ? `<span class="receipt">✓✓</span>` : '';
+
+          return `
+            <div class="message-bubble ${bubbleClass}">
+              <div>${m.message}</div>
+              <div class="timestamp">${sender} • ${time} ${receipt}</div>
+            </div>`;
+        }).join('');
+
+        if (newHTML !== lastRenderedMessages) {
+          box.innerHTML = newHTML;
+          box.scrollTop = box.scrollHeight;
+          lastRenderedMessages = newHTML;
+        }
+
+      } catch {
+        document.getElementById("messages").innerText = "❌ Error loading messages.";
+      }
     }
+
+    let typingTimeout;
+    const typingIndicator = document.getElementById("typingIndicator");
+
+    document.getElementById("message").addEventListener("input", () => {
+      typingIndicator.innerText = "You are typing...";
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        typingIndicator.innerText = "";
+      }, 1500);
+    });
+
+    document.getElementById("patientSelect").addEventListener("change", () => {
+      lastRenderedMessages = "";  // force refresh on patient change
+      loadMessages();
+    });
 
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const to = document.getElementById("patientSelect").value;
       const messageField = document.getElementById("message");
-      if (!currentPatientId || !messageField.value) return;
-      await fetch(`${backendUrl}/api/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: doctorEmail, to: currentPatientId, message: messageField.value })
-      });
-      messageField.value = "";
-      loadMessages();
+
+      const payload = {
+        from: doctorEmail,
+        to,
+        message: messageField.value
+      };
+
+      try {
+        await fetch(`${backendUrl}/api/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        messageField.value = "";
+        loadMessages();
+      } catch {
+        alert("❌ Failed to send message.");
+      }
     });
 
     loadPatients();
