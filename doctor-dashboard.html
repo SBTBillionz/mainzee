@@ -2,145 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Doctor Dashboard - Zeeland Hospital</title>
+  <title>Doctor Dashboard - FCTA General Hospital</title>
   <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #e5ddd5;
-      margin: 0;
-      padding: 0;
-    }
-
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      max-width: 700px;
-      margin: auto;
-      height: 100vh;
-      background-color: #f0f0f0;
-      border-left: 1px solid #ccc;
-      border-right: 1px solid #ccc;
-    }
-
-    .top-bar {
-      background-color: #075e54;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .profile-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .profile-section img {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      border: 2px solid white;
-    }
-
-    .logout-btn {
-      background: #d9534f;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background-color: #dcf8c6;
-    }
-
-    .message-bubble {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      margin: 8px 0;
-      line-height: 1.4;
-      font-size: 14px;
-      position: relative;
-      word-wrap: break-word;
-    }
-
-    .from-me {
-      background-color: #34b7f1;
-      color: white;
-      margin-left: auto;
-      text-align: right;
-      border-bottom-right-radius: 0;
-    }
-
-    .from-them {
-      background-color: white;
-      color: #333;
-      margin-right: auto;
-      text-align: left;
-      border-bottom-left-radius: 0;
-    }
-
-    .timestamp {
-      font-size: 10px;
-      color: #888;
-      margin-top: 4px;
-    }
-
-    .receipt {
-      font-size: 10px;
-      margin-left: 5px;
-    }
-
-    #messageForm {
-      display: flex;
-      padding: 15px;
-      background-color: #f0f0f0;
-      border-top: 1px solid #ccc;
-    }
-
-    #message {
-      flex: 1;
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background-color: #075e54;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 16px;
-      margin-left: 10px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    label, select {
-      display: block;
-      padding: 10px 15px;
-    }
-
-    select {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .typing-indicator {
-      font-size: 12px;
-      color: #666;
-      padding-left: 15px;
-      padding-bottom: 5px;
-      font-style: italic;
-    }
+    body { font-family: "Segoe UI", sans-serif; margin: 0; background: #e5ddd5; }
+    .chat-container { display: flex; flex-direction: column; max-width: 700px; margin: auto; height: 100vh; background: #f0f0f0; }
+    .top-bar { background: #075e54; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .profile-section { display: flex; align-items: center; gap: 10px; }
+    .profile-section img { width: 35px; height: 35px; border-radius: 50%; }
+    .logout-btn { background: #d9534f; border: none; padding: 8px 12px; color: white; border-radius: 5px; cursor: pointer; }
+    #messages { flex: 1; overflow-y: auto; padding: 20px; background: #dcf8c6; }
+    .message-bubble { max-width: 75%; padding: 10px 14px; border-radius: 10px; margin: 8px 0; font-size: 14px; }
+    .from-me { background: #34b7f1; color: white; margin-left: auto; border-bottom-right-radius: 0; }
+    .from-them { background: white; color: #333; margin-right: auto; border-bottom-left-radius: 0; }
+    .timestamp { font-size: 10px; color: #888; margin-top: 4px; }
+    .receipt { font-size: 10px; margin-left: 5px; }
+    #messageForm { display: flex; padding: 15px; background: #f0f0f0; border-top: 1px solid #ccc; }
+    #message { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; }
+    button { background: #075e54; color: white; border: none; border-radius: 20px; padding: 10px 16px; margin-left: 10px; cursor: pointer; }
+    label { padding: 10px; display: block; }
+    select { width: 100%; margin-bottom: 10px; padding: 10px; }
+    .typing-indicator { font-size: 12px; color: #555; padding-left: 15px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -148,16 +29,15 @@
     <div class="top-bar">
       <div class="profile-section">
         <img src="https://www.svgrepo.com/show/382106/avatar-doctor-male.svg" alt="Doctor">
-        <strong>Dr. Kabiru</strong>
+        <strong>Doctor Dashboard</strong>
       </div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <label for="patientSelect">💊 Chat with Patient</label>
+    <label for="patientSelect">💊 Select Patient</label>
     <select id="patientSelect"></select>
 
     <div class="typing-indicator" id="typingIndicator"></div>
-
     <div id="messages"></div>
 
     <form id="messageForm">
@@ -182,14 +62,11 @@
       try {
         const res = await fetch(`${backendUrl}/api/patients`);
         const data = await res.json();
-        const select = document.getElementById("patientSelect");
-        select.innerHTML = data.map(p =>
-          `<option value="${p.patientId}">${p.name} ${p.surname} (${p.patientId})</option>`
+        document.getElementById("patientSelect").innerHTML = data.map(
+          p => `<option value="${p.patientId}">${p.name} ${p.surname} (${p.patientId})</option>`
         ).join('');
         loadMessages();
-      } catch (err) {
-        alert("❌ Failed to load patients.");
-      }
+      } catch { alert("❌ Failed to load patients."); }
     }
 
     async function loadMessages() {
@@ -198,74 +75,48 @@
         const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
         const data = await res.json();
         const box = document.getElementById("messages");
-
-        const newHTML = data.map((m) => {
+        const newHTML = data.map(m => {
           const isMe = m.from === doctorEmail;
-          const bubbleClass = isMe ? 'from-me' : 'from-them';
-          const sender = isMe ? 'You' : 'Patient';
+          const bubbleClass = isMe ? "from-me" : "from-them";
+          const sender = isMe ? "You" : "Patient";
           const time = new Date(m.createdAt).toLocaleTimeString();
-          const receipt = isMe ? `<span class="receipt">✓✓</span>` : '';
-
-          return `
-            <div class="message-bubble ${bubbleClass}">
-              <div>${m.message}</div>
-              <div class="timestamp">${sender} • ${time} ${receipt}</div>
-            </div>`;
+          const receipt = isMe ? `<span class="receipt">✓✓</span>` : "";
+          return `<div class="message-bubble ${bubbleClass}">
+                    <div>${m.message}</div>
+                    <div class="timestamp">${sender} • ${time} ${receipt}</div>
+                  </div>`;
         }).join('');
-
         if (newHTML !== lastRenderedMessages) {
           box.innerHTML = newHTML;
           box.scrollTop = box.scrollHeight;
           lastRenderedMessages = newHTML;
         }
-
-      } catch {
-        document.getElementById("messages").innerText = "❌ Error loading messages.";
-      }
+      } catch { document.getElementById("messages").innerText = "❌ Error loading messages."; }
     }
 
     let typingTimeout;
-    const typingIndicator = document.getElementById("typingIndicator");
-
     document.getElementById("message").addEventListener("input", () => {
-      typingIndicator.innerText = "You are typing...";
+      document.getElementById("typingIndicator").innerText = "You are typing...";
       clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => {
-        typingIndicator.innerText = "";
-      }, 1500);
+      typingTimeout = setTimeout(() => { document.getElementById("typingIndicator").innerText = ""; }, 1500);
     });
 
-    document.getElementById("patientSelect").addEventListener("change", () => {
-      lastRenderedMessages = "";  // force refresh on patient change
-      loadMessages();
-    });
+    document.getElementById("patientSelect").addEventListener("change", () => { lastRenderedMessages = ""; loadMessages(); });
 
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const to = document.getElementById("patientSelect").value;
-      const messageField = document.getElementById("message");
-
-      const payload = {
-        from: doctorEmail,
-        to,
-        message: messageField.value
-      };
-
+      const msg = document.getElementById("message");
+      const payload = { from: doctorEmail, to, message: msg.value };
       try {
         await fetch(`${backendUrl}/api/messages`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
         });
-        messageField.value = "";
-        loadMessages();
-      } catch {
-        alert("❌ Failed to send message.");
-      }
+        msg.value = ""; loadMessages();
+      } catch { alert("❌ Failed to send message."); }
     });
 
-    loadPatients();
-    setInterval(loadMessages, 5000);
+    loadPatients(); setInterval(loadMessages, 5000);
   </script>
 </body>
 </html>
