@@ -21,26 +21,13 @@
       animation: pulse 2s infinite ease-in-out;
       margin-bottom: 15px;
     }
-
     @keyframes pulse {
       0% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.1); opacity: 0.9; }
       100% { transform: scale(1); opacity: 1; }
     }
-
-    h1 {
-      color: #ffffff;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    h4 {
-      color: #f0f0f0;
-      font-size: 14px;
-      margin-top: -5px;
-      margin-bottom: 40px;
-    }
-
+    h1 { color: #ffffff; font-size: 36px; margin-bottom: 10px; }
+    h4 { color: #f0f0f0; font-size: 14px; margin-top: -5px; margin-bottom: 40px; }
     .btn-group {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
@@ -52,7 +39,6 @@
       gap: 15px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-
     button {
       padding: 12px;
       font-size: 16px;
@@ -63,15 +49,10 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: #004e99;
-    }
+    button:hover { background-color: #004e99; }
   </style>
 </head>
 <body>
-
-  <!-- 🏥 Animated Hospital Icon (SVG) -->
   <svg class="hospital-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24">
     <path d="M19 3H5a2 2 0 00-2 2v16h2v-2h14v2h2V5a2 2 0 00-2-2zm0 12H5v-2h14v2zm0-4H5V9h14v2zm-6-4v2H11V7H9V5h2V3h2v2h2v2h-2z"/>
   </svg>
@@ -83,8 +64,7 @@
     <button onclick="location.href='register.html'">📝 New Patient - Register</button>
     <button onclick="location.href='login.html'">🔐 Patient Login</button>
     <button onclick="location.href='doctor-login.html'">👨‍⚕️ Doctor Login</button>
-    <button onclick="location.href='doctor-register.html'">👨‍⚕️ Doctor Registration</button>
+    <button onclick="location.href='admin.html'">⚙️ Admin Panel</button>
   </div>
-
 </body>
 </html>
