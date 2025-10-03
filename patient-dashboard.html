@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <title>Patient Dashboard - FCTA General Hospital</title>
   <style>
-    body { font-family: "Segoe UI", sans-serif; margin: 0; background: #e5ddd5; }
-    .chat-container { display: flex; flex-direction: column; max-width: 700px; margin: auto; height: 100vh; background: #fff; }
+    body { font-family: "Segoe UI", sans-serif; background: #e5ddd5; margin: 0; }
+    .chat-container { display: flex; flex-direction: column; max-width: 700px; margin: auto; height: 100vh; background: #f0f0f0; border-left: 1px solid #ccc; border-right: 1px solid #ccc; }
     .top-bar { background: #128c7e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
     .profile-section { display: flex; align-items: center; gap: 10px; }
-    .profile-section img { width: 35px; height: 35px; border-radius: 50%; }
-    .logout-btn { background: #d9534f; border: none; padding: 8px 12px; color: white; border-radius: 5px; cursor: pointer; }
-    #messages { flex: 1; overflow-y: auto; padding: 20px; background: #f0f0f0; }
-    .message-bubble { max-width: 75%; padding: 10px 14px; border-radius: 10px; margin: 8px 0; font-size: 14px; }
-    .from-me { background: #34b7f1; color: white; margin-left: auto; border-bottom-right-radius: 0; }
-    .from-them { background: #e4e4e4; color: #333; margin-right: auto; border-bottom-left-radius: 0; }
+    .profile-section img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; }
+    .logout-btn { background: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    #messages { flex: 1; overflow-y: auto; padding: 20px; background: #fff; }
+    .message-bubble { max-width: 75%; padding: 10px 14px; border-radius: 10px; margin: 8px 0; line-height: 1.4; font-size: 14px; word-wrap: break-word; }
+    .from-me { background: #34b7f1; color: white; margin-left: auto; text-align: right; border-bottom-right-radius: 0; }
+    .from-them { background: #e4e4e4; color: #333; margin-right: auto; text-align: left; border-bottom-left-radius: 0; }
     .timestamp { font-size: 10px; color: #777; margin-top: 4px; }
     .receipt { font-size: 10px; margin-left: 5px; }
-    #messageForm { display: flex; padding: 15px; background: #f0f0f0; border-top: 1px solid #ccc; }
+    #messageForm { display: flex; padding: 15px; background: #f0f0f0; border-top: 1px solid #ccc; gap: 8px; }
     #message { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; }
-    button { background: #128c7e; color: white; border: none; border-radius: 20px; padding: 10px 16px; margin-left: 10px; cursor: pointer; }
-    .typing-indicator { font-size: 12px; color: #555; padding-left: 15px; font-style: italic; }
+    button { background: #128c7e; color: white; border: none; border-radius: 20px; padding: 10px 16px; cursor: pointer; }
+    .typing-indicator { font-size: 12px; color: #666; padding-left: 15px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -27,7 +27,7 @@
     <div class="top-bar">
       <div class="profile-section">
         <img src="https://www.svgrepo.com/show/12856/doctor.svg" alt="Doctor">
-        <strong>Doctor Chat</strong>
+        <strong>Doctor</strong>
       </div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -36,7 +36,8 @@
     <div id="messages"></div>
 
     <form id="messageForm">
-      <input type="text" id="message" placeholder="Type a message..." required />
+      <input type="text" id="message" placeholder="Type a message..." />
+      <input type="file" id="fileInput" />
       <button type="submit">Send</button>
     </form>
   </div>
@@ -45,56 +46,78 @@
     const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
     const patientId = localStorage.getItem("patientId");
     const doctorEmail = localStorage.getItem("doctorEmail") || "sbtflex33@gmail.com";
-    let lastRenderedMessages = "";
+    let lastMessageCount = 0;
 
     if (!patientId) window.location.href = "login.html";
 
-    function logout() { localStorage.removeItem("patientId"); window.location.href = "index.html"; }
-
-    async function loadMessages() {
-      try {
-        const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
-        const data = await res.json();
-        const box = document.getElementById("messages");
-        const newHTML = data.map(m => {
-          const isMe = m.from === patientId;
-          const bubbleClass = isMe ? "from-me" : "from-them";
-          const sender = isMe ? "You" : "Doctor";
-          const time = new Date(m.createdAt).toLocaleTimeString();
-          const receipt = isMe ? `<span class="receipt">✓✓</span>` : "";
-          return `<div class="message-bubble ${bubbleClass}">
-                    <div>${m.message}</div>
-                    <div class="timestamp">${sender} • ${time} ${receipt}</div>
-                  </div>`;
-        }).join('');
-        if (newHTML !== lastRenderedMessages) {
-          box.innerHTML = newHTML;
-          box.scrollTop = box.scrollHeight;
-          lastRenderedMessages = newHTML;
-        }
-      } catch { document.getElementById("messages").innerText = "❌ Error loading messages."; }
+    function logout() {
+      localStorage.removeItem("patientId");
+      window.location.href = "index.html";
     }
 
-    let typingTimeout;
-    document.getElementById("message").addEventListener("input", () => {
-      document.getElementById("typingIndicator").innerText = "You are typing...";
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => { document.getElementById("typingIndicator").innerText = ""; }, 1500);
+    async function loadMessages() {
+      const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
+      const data = await res.json();
+      if (data.length === lastMessageCount) return;
+
+      const box = document.getElementById("messages");
+      data.forEach(m => {
+        if (document.getElementById(m._id)) return;
+        const isMe = m.from === patientId;
+        const bubbleClass = isMe ? 'from-me' : 'from-them';
+        const sender = isMe ? 'You' : 'Doctor';
+        const time = new Date(m.createdAt).toLocaleTimeString();
+        const receipt = isMe ? (m.isRead ? '✔✔' : '✔') : '';
+        const div = document.createElement("div");
+        div.id = m._id;
+        div.className = `message-bubble ${bubbleClass}`;
+        div.innerHTML = `
+          <div>${m.message || ""}</div>
+          ${m.fileUrl ? `<a href="${m.fileUrl}" target="_blank">📎 File</a>` : ""}
+          <div class="timestamp">${sender} • ${time} <span class="receipt">${receipt}</span></div>`;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+      });
+      lastMessageCount = data.length;
+    }
+
+    // Typing indicator
+    document.getElementById("message").addEventListener("input", async () => {
+      await fetch(`${backendUrl}/api/typing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: patientId, isTyping: true })
+      });
     });
 
+    async function checkTyping() {
+      const res = await fetch(`${backendUrl}/api/typing/${doctorEmail}`);
+      const data = await res.json();
+      document.getElementById("typingIndicator").innerText = data.typing ? "Doctor is typing..." : "";
+    }
+
+    // Send message
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const msg = document.getElementById("message");
-      const payload = { from: patientId, to: doctorEmail, message: msg.value };
-      try {
-        await fetch(`${backendUrl}/api/messages`, {
-          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
-        });
-        msg.value = ""; loadMessages();
-      } catch { alert("❌ Failed to send message."); }
+      const msg = document.getElementById("message").value;
+      const file = document.getElementById("fileInput").files[0];
+      let fileUrl = null;
+      if (file) fileUrl = URL.createObjectURL(file);
+
+      const payload = { from: patientId, to: doctorEmail, message: msg, fileUrl };
+      await fetch(`${backendUrl}/api/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      document.getElementById("message").value = "";
+      document.getElementById("fileInput").value = "";
+      loadMessages();
     });
 
-    loadMessages(); setInterval(loadMessages, 5000);
+    loadMessages();
+    setInterval(loadMessages, 4000);
+    setInterval(checkTyping, 2000);
   </script>
 </body>
 </html>
