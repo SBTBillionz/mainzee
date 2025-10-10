@@ -4,26 +4,57 @@
   <meta charset="UTF-8">
   <title>Admin Panel - FCTA General Hospital</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { color: #0066cc; }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f0f8ff; }
+    h2 { color: #0066cc; text-align: center; }
     .hidden { display: none; }
     form, table {
-      margin-top: 20px; padding: 20px;
-      border: 1px solid #ccc; border-radius: 8px;
-      background: #f9f9f9;
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
     input, button {
-      padding: 10px; margin: 5px 0; width: 100%;
-      border-radius: 5px; border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    button { background: #0066cc; color: white; cursor: pointer; }
+    button {
+      background: #0066cc;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
     button:hover { background: #004e99; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    .logout {
+      background: crimson;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      float: right;
+    }
   </style>
 </head>
 <body>
   <h2>⚙️ Admin Login</h2>
+
   <form id="adminLoginForm">
     <input type="text" id="adminUser" placeholder="Username" required>
     <input type="password" id="adminPass" placeholder="Password" required>
@@ -31,7 +62,9 @@
   </form>
 
   <div id="adminPanel" class="hidden">
+    <button class="logout" onclick="logout()">Logout</button>
     <h2>👨‍⚕️ Doctor Management</h2>
+
     <form id="doctorForm">
       <input type="text" id="docName" placeholder="Doctor Name" required>
       <input type="email" id="docEmail" placeholder="Doctor Email" required>
@@ -39,7 +72,7 @@
       <button type="submit">Register Doctor</button>
     </form>
 
-    <h3>📋 Registered Doctors</h3>
+    <h3 style="text-align:center;">📋 Registered Doctors</h3>
     <table>
       <thead>
         <tr><th>Name</th><th>Email</th></tr>
@@ -51,24 +84,36 @@
   <script>
     const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
 
-    // Hardcoded Admin credentials
-    const ADMIN_USER = "Drpaau001";
-    const ADMIN_PASS = "Paau001";
-
-    document.getElementById("adminLoginForm").addEventListener("submit", (e) => {
+    // ✅ Admin Login Handler
+    document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const user = document.getElementById("adminUser").value;
-      const pass = document.getElementById("adminPass").value;
+      const payload = {
+        username: document.getElementById("adminUser").value,
+        password: document.getElementById("adminPass").value
+      };
 
-      if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        document.getElementById("adminLoginForm").classList.add("hidden");
-        document.getElementById("adminPanel").classList.remove("hidden");
-        loadDoctors();
-      } else {
-        alert("❌ Invalid Admin credentials");
+      try {
+        const res = await fetch(`${backendUrl}/api/adminLogin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("isAdmin", "true");
+          document.getElementById("adminLoginForm").classList.add("hidden");
+          document.getElementById("adminPanel").classList.remove("hidden");
+          loadDoctors();
+        } else {
+          alert(data.message || "Invalid Admin credentials");
+        }
+      } catch (err) {
+        alert("❌ Server connection error");
       }
     });
 
+    // ✅ Register Doctor
     document.getElementById("doctorForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const payload = {
@@ -85,25 +130,35 @@
         const data = await res.json();
         if (res.ok) {
           alert("✅ Doctor registered successfully!");
-          loadDoctors();
           e.target.reset();
+          loadDoctors();
         } else {
-          alert("❌ Error: " + (data.error || "Failed"));
+          alert("❌ " + (data.message || "Failed to register"));
         }
       } catch {
         alert("❌ Server error");
       }
     });
 
+    // ✅ Load Doctors
     async function loadDoctors() {
       try {
         const res = await fetch(`${backendUrl}/api/doctors`);
         const data = await res.json();
         const list = document.getElementById("doctorList");
-        list.innerHTML = data.map(d => `<tr><td>${d.name}</td><td>${d.email}</td></tr>`).join("");
+        list.innerHTML = data.length
+          ? data.map(d => `<tr><td>${d.name}</td><td>${d.email}</td></tr>`).join("")
+          : "<tr><td colspan='2'>No doctors registered yet</td></tr>";
       } catch {
         alert("❌ Failed to fetch doctors");
       }
+    }
+
+    // ✅ Logout
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      document.getElementById("adminPanel").classList.add("hidden");
+      document.getElementById("adminLoginForm").classList.remove("hidden");
     }
   </script>
 </body>
