@@ -1,1 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
 
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background-image: url(back.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+}
+
+h2 {
+  text-align: center;
+  color: rgb(84, 84, 207);
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #2a5298;
+}
+
+button {
+  background: #2a5298;
+  color: white;
+  border: none;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1e3c72;
+}
+
+.logout {
+  background: red;
+  margin-bottom: 15px;
+}
+
+.logout:hover {
+  background: darkred;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: #2a5298;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background: #f5f5f5;
+}
+
+.records p {
+  background: #f1f3f6;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card">
+    <h2> Admin Login</h2>
+    <form id="loginForm">
+      <input type="text" id="user" placeholder="Username" required>
+      <input type="password" id="pass" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+
+    <h2>👨‍⚕️ Admin Dashboard</h2>
+
+    <div class="card">
+      <button class="logout" onclick="logout()">Logout</button>
+
+      <h3>➕ Register Doctor</h3>
+      <form id="doctorForm">
+        <input type="text" id="name" placeholder="Doctor Name" required>
+
+        <select id="specialty" required>
+          <option value="">Select Specialty</option>
+          <option>Oncologist</option>
+          <option>Surgeon</option>
+          <option>Psychiatrist</option>
+        </select>
+
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit">Register Doctor</button>
+      </form>
+    </div>
+
+    <!-- DOCTOR LIST -->
+    <div class="card">
+      <h3>📋 Doctors</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Specialty</th>
+          </tr>
+        </thead>
+        <tbody id="doctorList"></tbody>
+      </table>
+    </div>
+
+    <!-- RECORDS -->
+    <div class="card records">
+      <h3>📁 Patient Records</h3>
+      <div id="records">Loading...</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const backend = "http://localhost:5000"; 
+// 👉 If using Render, change to your live URL
+
+// ADMIN LOGIN DETAILS
+const ADMIN_USER = "23cs@gmail.com";
+const ADMIN_PASS = "23cs1029";
+
+// LOGIN
+document.getElementById("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    document.getElementById("loginCard").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    loadDoctors();
+    loadRecords();
+  } else {
+    alert("❌ Invalid login");
+  }
+});
+
+// LOGOUT
+function logout() {
+  location.reload();
+}
+
+// REGISTER DOCTOR
+document.getElementById("doctorForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const payload = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+    specialty: document.getElementById("specialty").value
+  };
+
+  try {
+    const res = await fetch(`${backend}/api/registerDoctor`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      alert("✅ Doctor registered successfully");
+      document.getElementById("doctorForm").reset();
+      loadDoctors();
+    } else {
+      alert("❌ Failed to register doctor");
+    }
+  } catch {
+    alert("❌ Server error");
+  }
+});
+
+// LOAD DOCTORS
+async function loadDoctors() {
+  try {
+    const res = await fetch(`${backend}/api/doctors`);
+    const data = await res.json();
+
+    document.getElementById("doctorList").innerHTML = data.map(d => `
+      <tr>
+        <td>${d.name}</td>
+        <td>${d.email}</td>
+        <td>${d.specialty || "N/A"}</td>
+      </tr>
+    `).join("");
+  } catch {
+    alert("❌ Failed to load doctors");
+  }
+}
+
+// LOAD RECORDS
+async function loadRecords() {
+  try {
+    const res = await fetch(`${backend}/api/records`);
+    const data = await res.json();
+
+    const box = document.getElementById("records");
+
+    if (!data.length) {
+      box.innerHTML = "No records yet...";
+      return;
+    }
+
+    box.innerHTML = data.map(r =>
+      `<p><b>${r.doctor}</b>: ${r.record}</p>`
+    ).join("");
+  } catch {
+    document.getElementById("records").innerText = "❌ Failed to load records";
+  }
+}
+</script>
+
+</body>
+</html>
