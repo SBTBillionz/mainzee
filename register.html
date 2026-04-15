@@ -1,245 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Patient Dashboard - 23CS Hospital</title>
+<meta charset="UTF-8">
+<title>Patient Registration - 23CS Hospital</title>
 
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #e5ddd5;
-      margin: 0;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
 
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      max-width: 700px;
-      margin: auto;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
+body {
+  margin: 0;
+  height: 100vh;
+  background: url(back.jpeg) no-repeat center center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .top-bar {
-      background-color: #128c7e;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.overlay {
+  background: rgba(0,0,0,0.6);
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
 
-    .controls {
-      padding: 10px;
-      background: #fff;
-    }
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    select, .emergency-btn {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-    }
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
 
-    .emergency-btn {
-      background: red;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
+input {
+  background: #f1f1f1;
+}
 
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background-color: #fff;
-    }
+input:focus {
+  outline: none;
+  border: 2px solid #0077cc;
+}
 
-    .message-bubble {
-      max-width: 75%;
-      padding: 10px;
-      border-radius: 10px;
-      margin: 8px 0;
-      font-size: 14px;
-    }
+button {
+  background: #0077cc;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    .from-me {
-      background-color: #34b7f1;
-      color: white;
-      margin-left: auto;
-      text-align: right;
-    }
+button:hover {
+  background: #005fa3;
+}
 
-    .from-them {
-      background-color: #e4e4e4;
-      color: #333;
-      margin-right: auto;
-    }
+#generateBtn {
+  background: #28a745;
+}
 
-    #messageForm {
-      display: flex;
-      padding: 10px;
-      background: #eee;
-    }
+#generateBtn:hover {
+  background: #1e7e34;
+}
 
-    #message {
-      flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background: #128c7e;
-      color: white;
-      border: none;
-      padding: 10px;
-      margin-left: 5px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-  </style>
+#response {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+</style>
 </head>
 
 <body>
 
-<div class="chat-container">
+<div class="overlay">
 
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <strong>Patient Dashboard</strong>
-    <button onclick="logout()">Logout</button>
-  </div>
+<h2>23CS Hospital<br>Patient Registration</h2>
 
-  <!-- CONTROLS -->
-  <div class="controls">
+<form id="registerForm">
 
-    <!-- SPECIALTY DROPDOWN -->
-    <select id="specialty">
-      <option value="">Select Doctor Specialty</option>
-      <option value="oncologist">Oncologist</option>
-      <option value="surgeon">Surgeon</option>
-      <option value="psychiatrist">Psychiatrist</option>
-    </select>
+  <input type="text" id="name" placeholder="First Name" required>
+  <input type="text" id="surname" placeholder="Surname" required>
 
-    <!-- EMERGENCY BUTTON -->
-    <button class="emergency-btn" onclick="callEmergency()">
-      🚨 Emergency Call (08139383653)
-    </button>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <input type="tel" id="emergency" placeholder="Emergency Contact" required>
 
-  </div>
+  <input type="password" id="password" placeholder="Create Password" required>
 
-  <!-- MESSAGES -->
-  <div id="messages"></div>
+  <!-- GENERATE ID -->
+  <button type="button" id="generateBtn">Generate Patient ID</button>
 
-  <!-- MESSAGE FORM -->
-  <form id="messageForm">
-    <input type="text" id="message" placeholder="Type a message..." required />
-    <button type="submit">Send</button>
-  </form>
+  <input type="text" id="patientId" placeholder="Generated Patient ID" readonly required>
+
+  <button type="submit">Register</button>
+
+</form>
+
+<p id="response"></p>
 
 </div>
 
 <script>
 const backendUrl = "https://zeeland-hospital-backend-2.onrender.com";
-const patientId = localStorage.getItem("patientId");
 
-// MAP SPECIALTY → DOCTOR
-const doctors = {
-  oncologist: "oncologist@gmail.com",
-  surgeon: "surgeon@gmail.com",
-  psychiatrist: "psychiatrist@gmail.com"
+// GENERATE ID
+document.getElementById("generateBtn").onclick = () => {
+  const id = "PT" + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById("patientId").value = id;
 };
 
-let doctorEmail = localStorage.getItem("doctorEmail");
-
-// REDIRECT IF NOT LOGGED IN
-if (!patientId) {
-  window.location.href = "login.html";
-}
-
-// LOGOUT
-function logout() {
-  localStorage.clear();
-  window.location.href = "index.html";
-}
-
-// SELECT SPECIALTY
-document.getElementById("specialty").addEventListener("change", (e) => {
-  const selected = e.target.value;
-
-  if (!selected) return;
-
-  doctorEmail = doctors[selected];
-  localStorage.setItem("doctorEmail", doctorEmail);
-
-  alert("✅ Connected to " + selected + " doctor");
-});
-
-// EMERGENCY CALL
-function callEmergency() {
-  window.location.href = "tel:08139383653";
-}
-
-// LOAD MESSAGES
-async function loadMessages() {
-  try {
-    const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
-    const data = await res.json();
-
-    const box = document.getElementById("messages");
-
-    box.innerHTML = data.map(m => {
-      const isMe = m.from === patientId;
-
-      return `
-        <div class="message-bubble ${isMe ? 'from-me' : 'from-them'}">
-          ${m.message}
-        </div>
-      `;
-    }).join("");
-
-    box.scrollTop = box.scrollHeight;
-
-  } catch {
-    document.getElementById("messages").innerText = "❌ Error loading messages.";
-  }
-}
-
-// SEND MESSAGE
-document.getElementById("messageForm").addEventListener("submit", async (e) => {
+// REGISTER
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!doctorEmail) {
-    alert("⚠️ Please select a doctor specialty first");
-    return;
+  const patientId = document.getElementById("patientId").value;
+
+  if (!patientId) {
+    return show("❌ Generate Patient ID first", "red");
   }
 
-  const msg = document.getElementById("message");
+  const payload = {
+    name: document.getElementById("name").value,
+    surname: document.getElementById("surname").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    emergency: document.getElementById("emergency").value,
+    password: document.getElementById("password").value,
+    patientId
+  };
 
   try {
-    await fetch(`${backendUrl}/api/messages`, {
+    const res = await fetch(`${backendUrl}/api/registerPatient`, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        from: patientId,
-        to: doctorEmail,
-        message: msg.value
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
 
-    msg.value = "";
-    loadMessages();
+    const data = await res.json();
+
+    if (res.ok) {
+      show("✅ Registration successful! Redirecting...", "lightgreen");
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+
+    } else {
+      show("❌ " + (data.message || "Registration failed"), "red");
+    }
 
   } catch {
-    alert("❌ Failed to send message.");
+    show("❌ Server error", "red");
   }
 });
 
-// INITIAL LOAD
-loadMessages();
-setInterval(loadMessages, 5000);
+// SHOW MESSAGE
+function show(msg, color) {
+  const el = document.getElementById("response");
+  el.style.color = color;
+  el.textContent = msg;
+}
 </script>
 
 </body>
