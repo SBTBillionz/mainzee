@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
 
 <style>
@@ -22,11 +23,15 @@ body {
   justify-content: center;
 }
 
-.container {
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   width: 100%;
-  max-width: 1000px;
+  max-width: 900px;
+  margin: auto;
+  background-color: #f0f0f0;
 }
-
 h2 {
   text-align: center;
   color: rgb(84, 84, 207);
@@ -106,6 +111,65 @@ tr:nth-child(even) {
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 8px;
+}
+  /* =========================
+   📱 RESPONSIVE DESIGN
+========================= */
+
+/* Mobile default */
+body {
+  font-size: 14px;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .chat-container {
+    max-width: 700px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
+
+  .chat-container {
+    max-width: 900px;
+  }
+}
+
+/* Message bubbles adjust */
+@media (min-width: 768px) {
+  .message-bubble {
+    max-width: 60%;
+    font-size: 15px;
+  }
+}
+
+/* Input + button fix */
+input, select, button {
+  font-size: 16px;
+  width: 100%;
+}
+
+/* Desktop form layout */
+@media (min-width: 768px) {
+  #messageForm {
+    flex-direction: row;
+  }
+
+  #message {
+    flex: 1;
+  }
+
+  button {
+    width: auto;
+  }
 }
 </style>
 </head>
