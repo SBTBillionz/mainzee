@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patient Login - 23CS Hospital</title>
   <style>
     body {
@@ -43,6 +44,65 @@
       padding: 10px;
       margin: 8px 0;
     }
+    /* =========================
+   📱 RESPONSIVE DESIGN
+========================= */
+
+/* Mobile default */
+body {
+  font-size: 14px;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .chat-container {
+    max-width: 700px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
+
+  .chat-container {
+    max-width: 900px;
+  }
+}
+
+/* Message bubbles adjust */
+@media (min-width: 768px) {
+  .message-bubble {
+    max-width: 60%;
+    font-size: 15px;
+  }
+}
+
+/* Input + button fix */
+input, select, button {
+  font-size: 16px;
+  width: 100%;
+}
+
+/* Desktop form layout */
+@media (min-width: 768px) {
+  #messageForm {
+    flex-direction: row;
+  }
+
+  #message {
+    flex: 1;
+  }
+
+  button {
+    width: auto;
+  }
+}
   </style>
 </head>
 <body>
