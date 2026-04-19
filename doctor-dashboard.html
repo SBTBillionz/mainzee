@@ -135,13 +135,32 @@
 
 <div class="chat-container">
 
-  <div class="top-bar">
-    <div class="profile-section">
-      <img src="https://www.svgrepo.com/show/382106/avatar-doctor-male.svg">
-      <strong>Doctor</strong>
-    </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <h3>Patients</h3>
+    <select id="patientSelect"></select>
   </div>
+
+  <!-- RIGHT CHAT AREA -->
+  <div class="chat-area">
+
+    <div class="top-bar">
+      <div class="profile-section">
+        <img src="https://www.svgrepo.com/show/382106/avatar-doctor-male.svg">
+        <strong>Dr. 23CS1029</strong>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="messages"></div>
+
+    <form id="messageForm">
+      <input type="text" id="message" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
+
+  </div>
+</div>
 
   <select id="patientSelect"></select>
 
