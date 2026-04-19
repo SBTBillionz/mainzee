@@ -107,8 +107,12 @@
     border-radius: 20px;
     border: 1px solid #ccc;
     margin-bottom: 5px;
-  }
+    flex: 1;
+   overflow-y: auto;
+   padding: 20px;
+}
 
+  
   #fileInput {
     margin-bottom: 5px;
   }
@@ -128,6 +132,39 @@
     padding: 10px;
     margin: 10px 0;
   }
+  /* =========================
+   DESKTOP WHATSAPP STYLE
+========================= */
+
+.sidebar {
+  display: none;
+  background: #fff;
+  padding: 15px;
+  border-right: 1px solid #ccc;
+}
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop layout */
+@media (min-width: 1024px) {
+  .chat-container {
+    flex-direction: row;
+    max-width: 1200px;
+  }
+
+  .sidebar {
+    display: block;
+    width: 30%;
+  }
+
+  .chat-area {
+    width: 70%;
+  }
+}
 </style>
 </head>
 
