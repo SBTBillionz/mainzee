@@ -251,11 +251,26 @@ input, select, button {
 
     <div id="messages"></div>
 
-    <form id="messageForm">
-      <input type="text" id="message" placeholder="Type a message..." required />
-      <button type="submit">Send</button>
-    </form>
+   <form id="messageForm" class="chat-input">
 
+  <!-- EMOJI -->
+  <span class="icon">😊</span>
+
+  <!-- TEXT INPUT -->
+  <input type="text" id="message" placeholder="Message" />
+
+  <!-- FILE UPLOAD -->
+  <label for="fileInput" class="icon">📎</label>
+  <input type="file" id="fileInput" hidden />
+
+  <!-- CAMERA -->
+  <label for="cameraInput" class="icon">📷</label>
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+
+  <!-- SEND / MIC -->
+  <button type="submit" id="sendBtn">➤</button>
+
+</form>
   </div>
 </div>
 
