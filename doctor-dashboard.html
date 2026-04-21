@@ -2,261 +2,112 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doctor Dashboard - 23CS Hospital</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Dashboard</title>
 
 <style>
-  body {
-    font-family: "Segoe UI", sans-serif;
-    background-color: #e5ddd5;
-    margin: 0;
-    padding: 0;
-  }
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  background: #e5ddd5;
+}
 
-  .chat-container {
+/* CONTAINER */
+.chat-container {
   display: flex;
-  flex-direction: column;
   height: 100vh;
-  width: 100%;
-  max-width: 900px;
-  margin: auto;
-  background-color: #f0f0f0;
-}
-  
-
-  .top-bar {
-    background-color: #075e54;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .profile-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .profile-section img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 2px solid white;
-  }
-
-  .logout-btn {
-    background: #d9534f;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  #messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    background-color: #dcf8c6;
-  }
-
-  .message-bubble {
-    max-width: 75%;
-    padding: 10px 14px;
-    border-radius: 10px;
-    margin: 8px 0;
-    line-height: 1.4;
-    font-size: 14px;
-    word-wrap: break-word;
-  }
-
-  .from-me {
-    background-color: #34b7f1;
-    color: white;
-    margin-left: auto;
-    text-align: right;
-    border-bottom-right-radius: 0;
-  }
-
-  .from-them {
-    background-color: white;
-    color: #333;
-    margin-right: auto;
-    text-align: left;
-    border-bottom-left-radius: 0;
-  }
-
-  .timestamp {
-    font-size: 10px;
-    color: #888;
-    margin-top: 4px;
-  }
-
-  #messageForm {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-top: 1px solid #ccc;
-  }
-
-  #message {
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    margin-bottom: 5px;
-    flex: 1;
-   overflow-y: auto;
-   padding: 20px;
 }
 
-  
-  #fileInput {
-    margin-bottom: 5px;
-  }
-
-  button {
-    background-color: #075e54;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  select {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-  }
-  /* =========================
-   DESKTOP WHATSAPP STYLE
-========================= */
-
+/* SIDEBAR (DESKTOP) */
 .sidebar {
-  display: none;
+  width: 30%;
   background: #fff;
-  padding: 15px;
   border-right: 1px solid #ccc;
+  padding: 10px;
+  display: none;
 }
 
+/* CHAT AREA */
 .chat-area {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* Desktop layout */
-@media (min-width: 1024px) {
-  .chat-container {
-    flex-direction: row;
-    max-width: 1200px;
-  }
-
-  .sidebar {
-    display: block;
-    width: 30%;
-  }
-
-  .chat-area {
-    width: 70%;
-  }
-}
-  /* =========================
-   📱 RESPONSIVE DESIGN
-========================= */
-
-/* Mobile default */
-body {
-  font-size: 14px;
+/* TOP BAR */
+.top-bar {
+  background: #075e54;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
 }
 
-/* Tablet */
-@media (min-width: 600px) {
-  body {
-    font-size: 15px;
-  }
-
-  .chat-container {
-    max-width: 700px;
-  }
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  background: #dcf8c6;
 }
 
-/* Desktop */
-@media (min-width: 1024px) {
-  body {
-    font-size: 16px;
-  }
-
-  .chat-container {
-    max-width: 900px;
-  }
+/* MESSAGE */
+.message-bubble {
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 8px 0;
 }
 
-/* Message bubbles adjust */
-@media (min-width: 768px) {
-  .message-bubble {
-    max-width: 60%;
-    font-size: 15px;
-  }
+.from-me {
+  background: #34b7f1;
+  color: white;
+  margin-left: auto;
 }
 
-/* Input + button fix */
-input, select, button {
-  font-size: 16px;
-  width: 100%;
+.from-them {
+  background: white;
 }
 
-/* Desktop form layout */
-@media (min-width: 768px) {
-  #messageForm {
-    flex-direction: row;
-  }
-
-  #message {
-    flex: 1;
-  }
-
-  button {
-    width: auto;
-  }
+.timestamp {
+  font-size: 10px;
+  color: gray;
 }
-  .chat-input {
+
+/* INPUT AREA */
+.chat-input {
   display: flex;
   align-items: center;
   padding: 10px;
   background: #f0f0f0;
-  border-top: 1px solid #ccc;
 }
 
-.chat-input input[type="text"] {
+.chat-input input {
   flex: 1;
   padding: 10px;
   border-radius: 20px;
   border: none;
   margin: 0 10px;
-  outline: none;
 }
 
 .icon {
   font-size: 20px;
   cursor: pointer;
-  padding: 5px;
 }
 
 #sendBtn {
   background: #25d366;
-  border: none;
   color: white;
+  border: none;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  font-size: 18px;
-  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (min-width: 768px) {
+  .sidebar {
+    display: block;
+  }
 }
 </style>
 </head>
@@ -265,61 +116,42 @@ input, select, button {
 
 <div class="chat-container">
 
-  <!-- LEFT SIDEBAR -->
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <h3>Patients</h3>
     <select id="patientSelect"></select>
   </div>
 
-  <!-- RIGHT CHAT AREA -->
+  <!-- CHAT -->
   <div class="chat-area">
 
     <div class="top-bar">
-      <div class="profile-section">
-        <img src="https://www.svgrepo.com/show/382106/avatar-doctor-male.svg">
-        <strong>Dr. 23CS1029</strong>
-      </div>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+      <strong>Doctor Chat</strong>
+      <button onclick="logout()">Logout</button>
     </div>
 
     <div id="messages"></div>
 
-   <form id="messageForm" class="chat-input">
+    <!-- INPUT -->
+    <form id="messageForm" class="chat-input">
 
-  <!-- EMOJI -->
-  <span class="icon">😊</span>
+      😊
 
-  <!-- TEXT INPUT -->
-  <input type="text" id="message" placeholder="Message" />
+      <input type="text" id="message" placeholder="Message">
 
-  <!-- FILE UPLOAD -->
-  <label for="fileInput" class="icon">📎</label>
-  <input type="file" id="fileInput" hidden />
+      <!-- FILE -->
+      <label for="fileInput" class="icon">📎</label>
+      <input type="file" id="fileInput" hidden>
 
-  <!-- CAMERA -->
-  <label for="cameraInput" class="icon">📷</label>
-  <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+      <!-- CAMERA -->
+      <label for="cameraInput" class="icon">📷</label>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
 
-  <!-- SEND / MIC -->
-  <button type="submit" id="sendBtn">➤</button>
+      <button id="sendBtn">➤</button>
 
-</form>
+    </form>
+
   </div>
-</div>
-
-  <select id="patientSelect"></select>
-
-  <div id="messages"></div>
-
-  <form id="messageForm">
-    <input type="text" id="message" placeholder="Type a message..." required>
-    
-    <!-- FILE UPLOAD -->
-    <input type="file" id="fileInput">
-
-    <button type="submit">Send</button>
-  </form>
-
 </div>
 
 <script>
@@ -337,21 +169,22 @@ function logout() {
 
 let lastRendered = "";
 
+/* LOAD PATIENTS */
 async function loadPatients() {
   const res = await fetch(`${backendUrl}/api/patients`);
   const data = await res.json();
 
   document.getElementById("patientSelect").innerHTML =
     data.map(p => `<option value="${p.patientId}">
-      ${p.name} ${p.surname} (${p.patientId})
+      ${p.name} (${p.patientId})
     </option>`).join('');
 
   loadMessages();
 }
 
+/* LOAD MESSAGES */
 async function loadMessages() {
   const patientId = document.getElementById("patientSelect").value;
-
   if (!patientId) return;
 
   const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
@@ -359,7 +192,6 @@ async function loadMessages() {
 
   const html = data.map(m => {
     const isMe = m.from === doctorEmail;
-    const sender = isMe ? "You" : "Patient";
     const time = new Date(m.createdAt).toLocaleTimeString();
 
     return `
@@ -369,10 +201,10 @@ async function loadMessages() {
 
         ${m.fileUrl ? `
           <img src="${backendUrl + m.fileUrl}" 
-               style="max-width:200px;border-radius:10px;margin-top:5px;">
+          style="max-width:200px;border-radius:10px;margin-top:5px;">
         ` : ""}
 
-        <div class="timestamp">${sender} • ${time}</div>
+        <div class="timestamp">${time}</div>
       </div>
     `;
   }).join("");
@@ -386,17 +218,21 @@ async function loadMessages() {
   }
 }
 
+/* SEND MESSAGE (FIXED) */
 document.getElementById("messageForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const to = document.getElementById("patientSelect").value;
-  const message = document.getElementById("message").value;
-  const file = document.getElementById("fileInput").files[0];
+  const msg = document.getElementById("message").value;
+
+  const file =
+    document.getElementById("fileInput").files[0] ||
+    document.getElementById("cameraInput").files[0];
 
   const formData = new FormData();
   formData.append("from", doctorEmail);
   formData.append("to", to);
-  formData.append("message", message);
+  formData.append("message", msg);
 
   if (file) {
     formData.append("file", file);
@@ -409,10 +245,12 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
 
   document.getElementById("message").value = "";
   document.getElementById("fileInput").value = "";
+  document.getElementById("cameraInput").value = "";
 
   loadMessages();
 });
 
+/* CHANGE PATIENT */
 document.getElementById("patientSelect").addEventListener("change", () => {
   lastRendered = "";
   loadMessages();
