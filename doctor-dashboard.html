@@ -216,7 +216,17 @@ async function loadMessages() {
 
     lastRendered = html;
   }
+}  // ✅ MARK MESSAGES AS READ HERE
+  await fetch(`${backendUrl}/api/messages/read`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: patientId,     // sender (patient)
+      to: doctorEmail      // receiver (doctor)
+    })
+  });
 }
+  
 
 /* SEND MESSAGE (FIXED) */
 document.getElementById("messageForm").addEventListener("submit", async (e) => {
