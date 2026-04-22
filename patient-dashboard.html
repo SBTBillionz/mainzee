@@ -196,6 +196,17 @@ document.getElementById("doctorSelect").addEventListener("change", (e) => {
 async function loadMessages() {
   const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
   const data = await res.json();
+  // ✅ MARK MESSAGES AS READ
+if (selectedDoctorEmail) {
+  await fetch(`${backendUrl}/api/messages/read`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: selectedDoctorEmail, // doctor
+      to: patientId              // current user
+    })
+  });
+}
 
   const box = document.getElementById("messages");
 
