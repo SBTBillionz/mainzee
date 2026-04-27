@@ -197,7 +197,9 @@ document.getElementById("doctorSelect").addEventListener("change", (e) => {
 
 // LOAD MESSAGES
 async function loadMessages() {
-  const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
+const res = await fetch(
+  `${backendUrl}/api/messages?user1=${patientId}&user2=${selectedDoctorEmail}`
+);
   const data = await res.json();
   // ✅ MARK MESSAGES AS READ
 if (selectedDoctorEmail) {
