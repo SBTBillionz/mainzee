@@ -174,69 +174,103 @@ function logout() {
   window.location.href = "index.html";
 }
 
+// =========================
 // LOAD DOCTORS
+// =========================
 document.getElementById("specialty").addEventListener("change", async (e) => {
   const specialty = e.target.value;
 
-  if (!specialty) return;
-
-  const res = await fetch(`${backendUrl}/api/doctors/${specialty}`);
-  const doctors = await res.json();
-
   const select = document.getElementById("doctorSelect");
 
-  select.innerHTML = doctors.map(d =>
-    `<option value="${d.email}">${d.name}</option>`
-  ).join("");
+  if (!specialty) {
+    select.innerHTML = `<option>Select doctor</option>`;
+    selectedDoctorEmail = "";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${backendUrl}/api/doctors/${specialty}`);
+    const doctors = await res.json();
+
+    if (!doctors.length) {
+      select.innerHTML = `<option>No doctors found</option>`;
+      return;
+    }
+
+    select.innerHTML = doctors.map(d =>
+      `<option value="${d.email}">${d.name}</option>`
+    ).join("");
+
+  } catch (err) {
+    alert("❌ Failed to load doctors");
+  }
 });
 
+// =========================
 // SELECT DOCTOR
+// =========================
 document.getElementById("doctorSelect").addEventListener("change", (e) => {
   selectedDoctorEmail = e.target.value;
+
+  if (!selectedDoctorEmail) return;
+
+  loadMessages(); // ✅ LOAD CHAT IMMEDIATELY
 });
 
+// =========================
 // LOAD MESSAGES
+// =========================
 async function loadMessages() {
-const res = await fetch(
-  `${backendUrl}/api/messages?user1=${patientId}&user2=${selectedDoctorEmail}`
-);
-  const data = await res.json();
-  // ✅ MARK MESSAGES AS READ
-if (selectedDoctorEmail) {
-  await fetch(`${backendUrl}/api/messages/read`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: selectedDoctorEmail, // doctor
-      to: patientId              // current user
-    })
-  });
+
+  if (!selectedDoctorEmail) return; // 🚨 VERY IMPORTANT
+
+  try {
+    const res = await fetch(
+      `${backendUrl}/api/messages?user1=${patientId}&user2=${selectedDoctorEmail}`
+    );
+
+    const data = await res.json();
+
+    // ✅ MARK AS READ
+    await fetch(`${backendUrl}/api/messages/read`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: selectedDoctorEmail,
+        to: patientId
+      })
+    });
+
+    const box = document.getElementById("messages");
+
+    box.innerHTML = data.map(m => {
+      const isMe = m.from === patientId;
+      const time = new Date(m.createdAt).toLocaleTimeString();
+
+      return `
+        <div class="message-bubble ${isMe ? 'from-me' : 'from-them'}">
+          <div>${m.message || ""}</div>
+
+          ${m.fileUrl ? `
+            <img src="${backendUrl + m.fileUrl}" 
+            style="max-width:200px;margin-top:5px;border-radius:8px;">
+          ` : ""}
+
+          <div class="timestamp">${time}</div>
+        </div>
+      `;
+    }).join("");
+
+    box.scrollTop = box.scrollHeight;
+
+  } catch (err) {
+    console.log("Error loading messages", err);
+  }
 }
 
-  const box = document.getElementById("messages");
-
-  box.innerHTML = data.map(m => {
-    const isMe = m.from === patientId;
-    const time = new Date(m.createdAt).toLocaleTimeString();
-
-    return `
-      <div class="message-bubble ${isMe ? 'from-me' : 'from-them'}">
-
-        <div>${m.message || ""}</div>
-
-        ${m.fileUrl ? `
-          <img src="${backendUrl + m.fileUrl}" style="max-width:200px;margin-top:5px;border-radius:8px;">
-        ` : ""}
-
-        <div class="timestamp">${time}</div>
-      </div>
-    `;
-  }).join("");
-
-  box.scrollTop = box.scrollHeight;
-}
-
-// SEND MESSAGE (UPDATED)
+// =========================
+// SEND MESSAGE
+// =========================
 document.getElementById("messageForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -245,10 +279,16 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
     return;
   }
 
-  const msg = document.getElementById("message").value;
+  const msg = document.getElementById("message").value.trim();
+
   const file =
     document.getElementById("fileInput").files[0] ||
     document.getElementById("cameraInput").files[0];
+
+  if (!msg && !file) {
+    alert("Type a message or attach a file");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("from", patientId);
@@ -257,22 +297,30 @@ document.getElementById("messageForm").addEventListener("submit", async (e) => {
 
   if (file) formData.append("file", file);
 
-  await fetch(`${backendUrl}/api/messages`, {
-    method: "POST",
-    body: formData
-  });
+  try {
+    await fetch(`${backendUrl}/api/messages`, {
+      method: "POST",
+      body: formData
+    });
 
-  document.getElementById("message").value = "";
-  document.getElementById("fileInput").value = "";
-  document.getElementById("cameraInput").value = "";
+    document.getElementById("message").value = "";
+    document.getElementById("fileInput").value = "";
+    document.getElementById("cameraInput").value = "";
 
-  loadMessages();
+    loadMessages(); // refresh
+
+  } catch {
+    alert("❌ Failed to send message");
+  }
 });
 
+// =========================
 // AUTO REFRESH
-setInterval(loadMessages, 3000);
-loadMessages();
-</script>
+// =========================
+setInterval(() => {
+  if (selectedDoctorEmail) loadMessages();
+}, 3000);
 
+</script>
 </body>
 </html>
