@@ -308,19 +308,18 @@ async function loadDoctors() {
     const data = await res.json();
 
     document.getElementById("doctorList").innerHTML = data.map(d => `
-      <tr>
-        <td>${d.name}</td>
-        <td>${d.email}</td>
-        <td>${d.specialty || "N/A"}</td>
-        <td>
-          <button 
-            onclick="deleteDoctor('${d._id}')" 
-            style="background:red;color:white;border:none;padding:6px 10px;border-radius:5px;cursor:pointer;">
-            Delete
-          </button>
-        </td>
-      </tr>
-    `).join("");
+  <tr>
+    <td>${d.name}</td>
+    <td>${d.email}</td>
+    <td>${d.specialty || "N/A"}</td>
+    <td>
+      <button onclick="deleteDoctor('${d._id}')" 
+        style="background:red;color:white;border:none;padding:6px 10px;border-radius:5px;">
+        Delete
+      </button>
+    </td>
+  </tr>
+`).join("");
 
   } catch {
     alert("❌ Failed to load doctors");
