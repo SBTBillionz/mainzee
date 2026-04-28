@@ -218,15 +218,16 @@ input, select, button {
     <div class="card">
       <h3>📋 Doctors</h3>
       <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Specialty</th>
-          </tr>
-        </thead>
-        <tbody id="doctorList"></tbody>
-      </table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Specialty</th>
+      <th>Action</th> <!-- ✅ NEW -->
+    </tr>
+  </thead>
+  <tbody id="doctorList"></tbody>
+</table>
     </div>
 
     <!-- RECORDS -->
@@ -311,13 +312,20 @@ async function loadDoctors() {
         <td>${d.name}</td>
         <td>${d.email}</td>
         <td>${d.specialty || "N/A"}</td>
+        <td>
+          <button 
+            onclick="deleteDoctor('${d._id}')" 
+            style="background:red;color:white;border:none;padding:6px 10px;border-radius:5px;cursor:pointer;">
+            Delete
+          </button>
+        </td>
       </tr>
     `).join("");
+
   } catch {
     alert("❌ Failed to load doctors");
   }
 }
-
 // LOAD RECORDS
 async function loadRecords() {
   try {
