@@ -187,7 +187,9 @@ async function loadMessages() {
   const patientId = document.getElementById("patientSelect").value;
   if (!patientId) return;
 
-  const res = await fetch(`${backendUrl}/api/messages?patientId=${patientId}`);
+const res = await fetch(
+  `${backendUrl}/api/messages?user1=${doctorEmail}&user2=${patientId}`
+);
   const data = await res.json();
 
   const html = data.map(m => {
