@@ -346,6 +346,29 @@ async function loadRecords() {
     document.getElementById("records").innerText = "❌ Failed to load records";
   }
 }
+
+  // =========================
+// ❌ DELETE DOCTOR
+// =========================
+async function deleteDoctor(id) {
+  const confirmDelete = confirm("⚠️ Are you sure you want to delete this doctor?");
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`${backend}/api/doctors/${id}`, {
+      method: "DELETE"
+    });
+
+    if (res.ok) {
+      alert("✅ Doctor deleted successfully");
+      loadDoctors(); // refresh list
+    } else {
+      alert("❌ Failed to delete doctor");
+    }
+  } catch (err) {
+    alert("❌ Server error");
+  }
+}
 </script>
 
 </body>
