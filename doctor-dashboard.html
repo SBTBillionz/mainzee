@@ -181,52 +181,73 @@ async function loadPatients() {
 
   loadMessages();
 }
-
 /* LOAD MESSAGES */
 async function loadMessages() {
+
   const patientId = document.getElementById("patientSelect").value;
+
   if (!patientId) return;
 
-const res = await fetch(
-  `${backendUrl}/api/messages?user1=${doctorEmail}&user2=${patientId}`
-);
-  const data = await res.json();
+  try {
 
-  const html = data.map(m => {
-    const isMe = m.from === doctorEmail;
-    const time = new Date(m.createdAt).toLocaleTimeString();
+    // GET CHAT
+    const res = await fetch(
+      `${backendUrl}/api/messages?user1=${doctorEmail}&user2=${patientId}`
+    );
 
-    return `
-      <div class="message-bubble ${isMe ? "from-me" : "from-them"}">
+    const data = await res.json();
 
-        <div>${m.message || ""}</div>
+    // MARK AS READ
+    await fetch(`${backendUrl}/api/messages/read`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: patientId,
+        to: doctorEmail
+      })
+    });
 
-        ${m.fileUrl ? `
-          <img src="${backendUrl + m.fileUrl}" 
-          style="max-width:200px;border-radius:10px;margin-top:5px;">
-        ` : ""}
+    // DISPLAY MESSAGES
+    const html = data.map(m => {
 
-        <div class="timestamp">${time}</div>
-      </div>
-    `;
-  }).join("");
+      const isMe = m.from === doctorEmail;
+      const time = new Date(m.createdAt).toLocaleTimeString();
 
-  if (html !== lastRendered) {
-    document.getElementById("messages").innerHTML = html;
-    document.getElementById("messages").scrollTop =
-      document.getElementById("messages").scrollHeight;
+      return `
+        <div class="message-bubble ${isMe ? "from-me" : "from-them"}">
 
-    lastRendered = html;
+          <div>${m.message || ""}</div>
+
+          ${m.fileUrl ? `
+            <img 
+              src="${backendUrl + m.fileUrl}"
+              style="max-width:200px;border-radius:10px;margin-top:5px;"
+            >
+          ` : ""}
+
+          <div class="timestamp">${time}</div>
+
+        </div>
+      `;
+    }).join("");
+
+    if (html !== lastRendered) {
+
+      document.getElementById("messages").innerHTML = html;
+
+      document.getElementById("messages").scrollTop =
+        document.getElementById("messages").scrollHeight;
+
+      lastRendered = html;
+    }
+
+  } catch (err) {
+
+    console.log("Load message error:", err);
+
   }
-}  // ✅ MARK MESSAGES AS READ HERE
-  await fetch(`${backendUrl}/api/messages/read`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: patientId,     // sender (patient)
-      to: doctorEmail      // receiver (doctor)
-    })
-  });
 }
   
 
